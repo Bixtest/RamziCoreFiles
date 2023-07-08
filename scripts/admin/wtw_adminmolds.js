@@ -1,6 +1,6 @@
-/* All code is Copyright 2013-2023 Bixma */
-/* All code is patent */
-
+/* All code is Copyright 2013-2023 Aaron Scott Dishno Ed.D., HTTP3D Inc. - WalkTheWeb, and the contributors */
+/* "3D Browsing" is a USPTO Patented (Serial # 9,940,404) and Worldwide PCT Patented Technology by Aaron Scott Dishno Ed.D. and HTTP3D Inc. */
+/* Read the included GNU Ver 3.0 license file for details and additional release information. */
 
 /* these functions are used to administer a website in admin mode only */
 
@@ -924,7 +924,6 @@ WTWJS.prototype.openAddNewMold = function(zwebtype, zshape) {
 		zmold = WTW.addMold(zmolds[zmoldind].moldname, zmolds[zmoldind], zmolds[zmoldind].parentname, zcoveringname);
 		zmold.isPickable = true;
 		WTW.setCoveringFormFields(zcoveringname);
-		WTW.registerMouseOver(zmold);
 		switch (zshape.toLowerCase()) {
 			case 'tube':
 				var zcoords = WTW.getNewCoordinates(50);
@@ -1089,11 +1088,11 @@ WTWJS.prototype.changeOnClickEvent = function(zobj) {
 		if (zobj.selectedIndex == 1) {
 			dGet('wtw_tmoldimagejsfunction').value = 'WTW.openIFrame';
 			dGet('wtw_moldjsparameterstitle').innerHTML = 'Web Address (URL)';
-			dGet('wtw_moldjsparametersnote').innerHTML = '(Example: https://www.bixma.com)';
+			dGet('wtw_moldjsparametersnote').innerHTML = '(Example: https://www.walktheweb.com)';
 		} else if (zobj.selectedIndex == 2) {
 			dGet('wtw_tmoldimagejsfunction').value = 'WTW.openWebpage';
 			dGet('wtw_moldjsparameterstitle').innerHTML = 'Web Address (URL)';
-			dGet('wtw_moldjsparametersnote').innerHTML = '(Example: https://www.bixma.com)';
+			dGet('wtw_moldjsparametersnote').innerHTML = '(Example: https://www.walktheweb.com)';
 		} else  if (zobj.selectedIndex == 0) {
 			dGet('wtw_tmoldimagejsfunction').value = '';
 			dGet('wtw_tmoldimagejsparameters').value = '';
@@ -1612,12 +1611,11 @@ WTWJS.prototype.openEditPoles = function(zmold) {
 	/* open edit pole lines and position, rotation, and scale to mold */
 	try {
 		WTW.closeEditPoles();
-		scene.render();
 		var zmoldguide = scene.getTransformNodeByID(zmold.name + '-guide');
 		if (zmoldguide != null) {
 			zmold = zmoldguide;
 		}
-		if (zmold != null) {
+		if (zmold != null && (dGet('wtw_tmoldid').value != '' || dGet('wtw_tactionzoneid').value != '' || dGet('wtw_teditconnectinggridid').value != '')) {
 			var zpx = zmold.position.x;
 			var zpy = zmold.position.y;
 			var zpz = zmold.position.z;
@@ -1638,7 +1636,10 @@ WTWJS.prototype.openEditPoles = function(zmold) {
 				WTW.lineZ.isPickable = false;
 				WTW.lineX.isPickable = false;
 				WTW.lineY.isPickable = false;
-
+				WTW.lineZ.renderingGroupId = 1;
+				WTW.lineX.renderingGroupId = 1;
+				WTW.lineY.renderingGroupId = 1;
+				
 				WTW.lineX1 = BABYLON.MeshBuilder.CreateLines('linex1', {points: [new BABYLON.Vector3(-.5, -.5, -100), new BABYLON.Vector3(-.5, -.5, 100)], useVertexAlpha: false, updatable: false}, scene);
 				WTW.lineX2 = BABYLON.MeshBuilder.CreateLines('linex2', {points: [new BABYLON.Vector3(-.5, .5, -100), new BABYLON.Vector3(-.5, .5, 100)], useVertexAlpha: false, updatable: false}, scene);
 				WTW.lineX3 = BABYLON.MeshBuilder.CreateLines('linex3', {points: [new BABYLON.Vector3(.5, -.5, -100), new BABYLON.Vector3(.5, -.5, 100)], useVertexAlpha: false, updatable: false}, scene);
@@ -1671,6 +1672,14 @@ WTWJS.prototype.openEditPoles = function(zmold) {
 				WTW.lineX6.parent = zmold;
 				WTW.lineX7.parent = zmold;
 				WTW.lineX8.parent = zmold;
+				WTW.lineX1.renderingGroupId = 1;
+				WTW.lineX2.renderingGroupId = 1;
+				WTW.lineX3.renderingGroupId = 1;
+				WTW.lineX4.renderingGroupId = 1;
+				WTW.lineX5.renderingGroupId = 1;
+				WTW.lineX6.renderingGroupId = 1;
+				WTW.lineX7.renderingGroupId = 1;
+				WTW.lineX8.renderingGroupId = 1;
 
 				WTW.lineY1 = BABYLON.MeshBuilder.CreateLines('liney1', {points: [new BABYLON.Vector3(-.5, -100, -.5), new BABYLON.Vector3(-.5, 100, -.5)], useVertexAlpha: false, updatable: false}, scene);
 				WTW.lineY2 = BABYLON.MeshBuilder.CreateLines('liney2', {points: [new BABYLON.Vector3(-.5, -100, .5), new BABYLON.Vector3(-.5, 100, .5)], useVertexAlpha: false, updatable: false}, scene);
@@ -1704,6 +1713,14 @@ WTWJS.prototype.openEditPoles = function(zmold) {
 				WTW.lineY6.parent = zmold;
 				WTW.lineY7.parent = zmold;
 				WTW.lineY8.parent = zmold;
+				WTW.lineY1.renderingGroupId = 1;
+				WTW.lineY2.renderingGroupId = 1;
+				WTW.lineY3.renderingGroupId = 1;
+				WTW.lineY4.renderingGroupId = 1;
+				WTW.lineY5.renderingGroupId = 1;
+				WTW.lineY6.renderingGroupId = 1;
+				WTW.lineY7.renderingGroupId = 1;
+				WTW.lineY8.renderingGroupId = 1;
 
 				WTW.lineZ1 = BABYLON.MeshBuilder.CreateLines('linez1', {points: [new BABYLON.Vector3(-100, -.5, -.5), new BABYLON.Vector3(100, -.5, -.5)], useVertexAlpha: false, updatable: false}, scene);
 				WTW.lineZ2 = BABYLON.MeshBuilder.CreateLines('linez2', {points: [new BABYLON.Vector3(-100, -.5, .5), new BABYLON.Vector3(100, -.5, .5)], useVertexAlpha: false, updatable: false}, scene);
@@ -1737,6 +1754,15 @@ WTWJS.prototype.openEditPoles = function(zmold) {
 				WTW.lineZ6.parent = zmold;
 				WTW.lineZ7.parent = zmold;
 				WTW.lineZ8.parent = zmold;
+				WTW.lineZ1.renderingGroupId = 1;
+				WTW.lineZ2.renderingGroupId = 1;
+				WTW.lineZ3.renderingGroupId = 1;
+				WTW.lineZ4.renderingGroupId = 1;
+				WTW.lineZ5.renderingGroupId = 1;
+				WTW.lineZ6.renderingGroupId = 1;
+				WTW.lineZ7.renderingGroupId = 1;
+				WTW.lineZ8.renderingGroupId = 1;
+
 				var zalphamold = 1;
 				var zwx = .1;
 				var zwy = 1;
@@ -2550,7 +2576,7 @@ WTWJS.prototype.getNewCoordinates = function(zdist) {
 	};
 }
 
-WTWJS.prototype.openColorSelector = function(zobj, ztitle, zcolorgroup) {
+WTWJS.prototype.openMoldColorSelector = function(zobj, ztitle, zcolorgroup) {
 	/* when form uses color as a texture, the color wheels are opened and set to the current color settings */
 	/* typical colors are a combination of emissive, diffuse, and specular color settings */
 	try {
@@ -2577,7 +2603,7 @@ WTWJS.prototype.openColorSelector = function(zobj, ztitle, zcolorgroup) {
 			zcolortitle.height = '50px';
 			zpanel.addControl(zcolortitle);     
 		
-			zmold = WTW.pluginsOpenColorSelector(zmold, zmoldname, dGet('wtw_tmoldshape').value, zcolorgroup);
+			zmold = WTW.pluginsOpenMoldColorSelector(zmold, zmoldname, dGet('wtw_tmoldshape').value, zcolorgroup);
 			
 			var zcolorpicker = new BABYLON.GUI.ColorPicker();
 			var colorvalue = null;
@@ -2648,17 +2674,17 @@ WTWJS.prototype.openColorSelector = function(zobj, ztitle, zcolorgroup) {
 			zcolorpicker.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
 			zcolorpicker.onValueChangedObservable.add(function(value) {
 				if (value != null) {
-					WTW.setColor(dGet('wtw_tmoldname').value, zcolorgroup, value.r, value.g, value.b);
+					WTW.setMoldColor(dGet('wtw_tmoldname').value, zcolorgroup, value.r, value.g, value.b);
 				}
 			});
 			zpanel.addControl(zcolorpicker); 
 		}
 	} catch (ex) {
-		WTW.log('core-scripts-admin-wtw_adminmolds.js-openColorSelector=' + ex.message);
+		WTW.log('core-scripts-admin-wtw_adminmolds.js-openMoldColorSelector=' + ex.message);
 	}
 }
 
-WTWJS.prototype.setMoldColor = function(zmoldname, zspecularcolor, zemissivecolor, zdiffusecolor, zambientcolor) {
+WTWJS.prototype.resetMoldColor = function(zmoldname, zspecularcolor, zemissivecolor, zdiffusecolor, zambientcolor) {
 	/* reset the mold color and save settings to form fields and array */
 	try {
 		var zmold = WTW.getMeshOrNodeByID(zmoldname);
@@ -2720,11 +2746,11 @@ WTWJS.prototype.setMoldColor = function(zmoldname, zspecularcolor, zemissivecolo
 			dGet('wtw_tmoldwebtextambient').value = zambientcolor;
 		}
 	} catch (ex) {
-		WTW.log('core-scripts-admin-wtw_adminmolds.js-setMoldColor=' + ex.message);
+		WTW.log('core-scripts-admin-wtw_adminmolds.js-resetMoldColor=' + ex.message);
 	}
 }
 
-WTWJS.prototype.setColorDirect = function(zobj) {
+WTWJS.prototype.setMoldColorDirect = function(zobj) {
 	/* set color after change is made on the text box */
 	try {
 		if (zobj != null) {
@@ -2738,36 +2764,36 @@ WTWJS.prototype.setColorDirect = function(zobj) {
 					ztitle = 'Diffuse Color (Base)';
 					zcolorgroup = 'diffuse';
 					/* reset the mold color and save settings to form fields and array */
-					WTW.setMoldColor(zmoldname, zmoldnameparts.molds[zmoldnameparts.moldind].color.specularcolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.emissivecolor, zobj.value, zmoldnameparts.molds[zmoldnameparts.moldind].color.ambientcolor);
+					WTW.resetMoldColor(zmoldname, zmoldnameparts.molds[zmoldnameparts.moldind].color.specularcolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.emissivecolor, zobj.value, zmoldnameparts.molds[zmoldnameparts.moldind].color.ambientcolor);
 					break;
 				case 'wtw_tmoldemissivecolor':
 					ztitle = 'Emissive Color (Projected)';
 					zcolorgroup = 'emissive';
 					/* reset the mold color and save settings to form fields and array */
-					WTW.setMoldColor(zmoldname, zmoldnameparts.molds[zmoldnameparts.moldind].color.specularcolor, zobj.value, zmoldnameparts.molds[zmoldnameparts.moldind].color.diffusecolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.ambientcolor);
+					WTW.resetMoldColor(zmoldname, zmoldnameparts.molds[zmoldnameparts.moldind].color.specularcolor, zobj.value, zmoldnameparts.molds[zmoldnameparts.moldind].color.diffusecolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.ambientcolor);
 					break;
 				case 'wtw_tmoldspecularcolor':
 					ztitle = 'Specular Color (Highlight)';
 					zcolorgroup = 'specular';
 					/* reset the mold color and save settings to form fields and array */
-					WTW.setMoldColor(zmoldname, zobj.value, zmoldnameparts.molds[zmoldnameparts.moldind].color.emissivecolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.diffusecolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.ambientcolor);
+					WTW.resetMoldColor(zmoldname, zobj.value, zmoldnameparts.molds[zmoldnameparts.moldind].color.emissivecolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.diffusecolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.ambientcolor);
 					break;
 				case 'wtw_tmoldambientcolor':
 					ztitle = 'Ambient Color (Environment)';
 					zcolorgroup = 'ambient';
 					/* reset the mold color and save settings to form fields and array */
-					WTW.setMoldColor(zmoldname, zmoldnameparts.molds[zmoldnameparts.moldind].color.specularcolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.emissivecolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.diffusecolor, zobj.value);
+					WTW.resetMoldColor(zmoldname, zmoldnameparts.molds[zmoldnameparts.moldind].color.specularcolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.emissivecolor, zmoldnameparts.molds[zmoldnameparts.moldind].color.diffusecolor, zobj.value);
 					break;
 			}
 			WTW.closeColorSelector(true);
-			WTW.openColorSelector(zobj, ztitle, zcolorgroup);
+			WTW.openMoldColorSelector(zobj, ztitle, zcolorgroup);
 		}
 	} catch (ex) {
-		WTW.log('core-scripts-admin-wtw_adminmolds.js-setColorDirect=' + ex.message);
+		WTW.log('core-scripts-admin-wtw_adminmolds.js-setMoldColorDirect=' + ex.message);
 	}
 }
 
-WTWJS.prototype.setColor = function(zmoldname, zcolorgroup, zr, zg, zb) {
+WTWJS.prototype.setMoldColor = function(zmoldname, zcolorgroup, zr, zg, zb) {
 	/* set color after change is made on the color wheels */
 	try {
 		var zmolds = null;
@@ -2899,58 +2925,13 @@ WTWJS.prototype.setColor = function(zmoldname, zcolorgroup, zr, zg, zb) {
 						zmolds[zmoldind].color.ambientcolor = zcolor.toHexString().toLowerCase();
 						break;
 				}
-				WTW.pluginsSetColor(zmoldname, zcolorgroup, dGet('wtw_tmoldemissivecolor').value, dGet('wtw_tmolddiffusecolor').value, dGet('wtw_tmoldspecularcolor').value, dGet('wtw_tmoldambientcolor').value);
+				WTW.pluginsSetMoldColor(zmoldname, zcolorgroup, dGet('wtw_tmoldemissivecolor').value, dGet('wtw_tmolddiffusecolor').value, dGet('wtw_tmoldspecularcolor').value, dGet('wtw_tmoldambientcolor').value);
 			}
 		}
 		WTW.setNewMold();
 	} catch (ex) {
-		WTW.log('core-scripts-admin-wtw_adminmolds.js-setColor=' + ex.message);
+		WTW.log('core-scripts-admin-wtw_adminmolds.js-setMoldColor=' + ex.message);
 	}
-}
-
-WTWJS.prototype.closeColorSelector = function(zcloseovercanvas) {
-	/* close and dispose color selector after use */
-	try {
-		if (zcloseovercanvas == undefined) {
-			zcloseovercanvas = true;
-		}
-		if ((zcloseovercanvas == false && WTW.guiAdminColors != null && WTW.canvasFocus == 0) || (zcloseovercanvas && WTW.guiAdminColors != null)) {
-			WTW.guiAdminColors.dispose();
-			WTW.guiAdminColors = null;
-		}
-	} catch (ex) {
-		WTW.log('core-scripts-admin-wtw_adminmolds.js-closeColorSelector=' + ex.message);
-	}
-}
-
-WTWJS.prototype.setTextColor = function(zbgcolor, zlightcolor, zdarkcolor) {
-	/* when the color is selected, the form updates the color to the background */
-	/* this also sets the text color to an opposite color than the background (default is black or white) */
-	var zcolor = 'black';
-	try {
-		if (zlightcolor == undefined) {
-			zlightcolor = '#ffffff';
-		}
-		if (zdarkcolor == undefined) {
-			zdarkcolor = '#000000';
-		}
-		var zcolorstring = (zbgcolor.charAt(0) === '#') ? zbgcolor.substring(1, 7) : zbgcolor;
-		var zred = parseInt(zcolorstring.substring(0, 2), 16); // hexToR
-		var zgreen = parseInt(zcolorstring.substring(2, 4), 16); // hexToG
-		var zblue = parseInt(zcolorstring.substring(4, 6), 16); // hexToB
-		var zuicolors = [zred / 255, zgreen / 255, zblue / 255];
-		var zcols = zuicolors.map((zcol) => {
-			if (zcol <= 0.03928) {
-				return zcol / 12.92;
-			}
-			return Math.pow((zcol + 0.055) / 1.055, 2.4);
-		});
-		var zcompare = (0.2126 * zcols[0]) + (0.7152 * zcols[1]) + (0.0722 * zcols[2]);
-		zcolor = (zcompare > 0.179) ? zdarkcolor : zlightcolor;
-	} catch (ex) {
-		WTW.log('core-scripts-admin-wtw_adminmolds.js-setTextColor=' + ex.message);
-	}
-	return zcolor;
 }
 
 
@@ -3716,9 +3697,6 @@ WTWJS.prototype.setNewMold = function(zrebuildmold) {
 					if (zhasdependents == 1) {
 						zmold = WTW.getMoldCSG(zmold, zmolds[zmoldind]);
 					}
-				}
-				if (zrebuildmold == 1 && zshape != 'image') {
-					WTW.registerMouseOver(zmold);
 				}
 				WTW.openEditPoles(zmold);
 			}

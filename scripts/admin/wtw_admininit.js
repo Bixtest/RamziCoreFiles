@@ -1,6 +1,6 @@
-/* All code is Copyright 2013-2023 Bixma */
-/* All code is patent */
-
+/* All code is Copyright 2013-2023 Aaron Scott Dishno Ed.D., HTTP3D Inc. - WalkTheWeb, and the contributors */
+/* "3D Browsing" is a USPTO Patented (Serial # 9,940,404) and Worldwide PCT Patented Technology by Aaron Scott Dishno Ed.D. and HTTP3D Inc. */
+/* Read the included GNU Ver 3.0 license file for details and additional release information. */
 
 /* these functions can be used to add admin mode only initializations (run functions after scene is initialized) */
 
@@ -41,7 +41,7 @@ WTWJS.prototype.moldBackup = null;
 WTWJS.prototype.adminInit = function() {
 	/* do not delete this function - if it exists, user is loading in admin mode (checks in the wtw_core.js init sequence) */
 	try {
-		/* add code if necessary, executes after roomz scene completes loading sequence */
+		/* add code if necessary, executes after WalkTheWeb scene completes loading sequence */
 	} catch (ex) {
 		WTW.log('core-scripts-admin-wtw_admininit.js-adminInit=' + ex.message);
 	}

@@ -1,5 +1,6 @@
-/* All code is Copyright 2013-2023 Bixma */
-/* All code is patent */
+/* All code is Copyright 2013-2023 Aaron Scott Dishno Ed.D., HTTP3D Inc. - WalkTheWeb, and the contributors */
+/* "3D Browsing" is a USPTO Patented (Serial # 9,940,404) and Worldwide PCT Patented Technology by Aaron Scott Dishno Ed.D. and HTTP3D Inc. */
+/* Read the included GNU Ver 3.0 license file for details and additional release information. */
 
 /* these functions are used to administer a website in admin mode only */
 /* connecting grids are transparent cubes that set the position, rotation, and scaling for all 3D Communities, 3D Buildings, and 3D Things */
@@ -326,7 +327,7 @@ WTWJS.prototype.addConnectingGrid = async function(zchildwebtype, zchildwebid, z
 						}
 					}
 				}
-				dGet('wtw_tcommunityname').value = 'Roomz';
+				dGet('wtw_tcommunityname').value = 'WalkTheWeb';
 				dGet('wtw_tcommunitydescription').value = '';
 				dGet('wtw_tcommunityanalyticsid').value = '';
 			}
@@ -407,7 +408,7 @@ WTWJS.prototype.addConnectingGrid = async function(zchildwebtype, zchildwebid, z
 						WTW.connectingGrids[zconnectinggridind].communityinfo.analyticsid = dGet('wtw_tcommunityanalyticsid').value;
 					} else {
 						WTW.connectingGrids[zconnectinggridind].communityinfo.communityid = '';
-						WTW.connectingGrids[zconnectinggridind].communityinfo.communityname = 'Roomz';
+						WTW.connectingGrids[zconnectinggridind].communityinfo.communityname = 'WalkTheWeb';
 						WTW.connectingGrids[zconnectinggridind].buildinginfo.buildingid = zparentwebid;
 						WTW.connectingGrids[zconnectinggridind].buildinginfo.buildingname = WTW.encode(zchildwebname);
 					}
@@ -425,7 +426,7 @@ WTWJS.prototype.addConnectingGrid = async function(zchildwebtype, zchildwebid, z
 							WTW.connectingGrids[zconnectinggridind].buildinginfo.buildingname = '';
 						} else {
 							WTW.connectingGrids[zconnectinggridind].communityinfo.communityid = '';
-							WTW.connectingGrids[zconnectinggridind].communityinfo.communityname = 'Roomz';
+							WTW.connectingGrids[zconnectinggridind].communityinfo.communityname = 'WalkTheWeb';
 						}
 						dGet('wtw_tthinganalyticsid').value = '';
 					}
@@ -738,6 +739,7 @@ WTWJS.prototype.setFirstBuilding = function() {
 			zmold.rotation.z = WTW.getRadians(zbuildingrotationz);
 			zmold.isPickable = false;
 			zmold.checkCollisions = false;
+			zmold.renderingGroupId = 1;
 			zmold.position.x = zbuildingpositionx;
 			zmold.position.y = zbuildingpositiony;
 			zmold.position.z = zbuildingpositionz;			
