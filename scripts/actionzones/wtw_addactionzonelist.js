@@ -1,5 +1,7 @@
-/* All code is Copyright 2013-2023 Bixma */
-/* All code is patent */
+/* All code is Copyright 2013-2023 Aaron Scott Dishno Ed.D., HTTP3D Inc. - WalkTheWeb, and the contributors */
+/* "3D Browsing" is a USPTO Patented (Serial # 9,940,404) and Worldwide PCT Patented Technology by Aaron Scott Dishno Ed.D. and HTTP3D Inc. */
+/* Read the included GNU Ver 3.0 license file for details and additional release information. */
+
 /* these functions set the types of action zones to add and define the default values, form fields, and functions to create the action zones */
 
 WTWJS.prototype.getActionZoneList = function() {
@@ -7,10 +9,10 @@ WTWJS.prototype.getActionZoneList = function() {
 	var zactionzonelist = null;
 	zactionzonelist = [];
 	try {
-		zactionzonelist[zactionzonelist.length] = {'name':'Load Zone','helpurl':'https://www.Roomz.com/wiki/load-zone-action-zones/', 'defaulteditform':'0'};
-		zactionzonelist[zactionzonelist.length] = {'name':'Unload Zone','helpurl':'https://www.Roomz.com/wiki/load-zone-action-zones/', 'defaulteditform':'0'};
-		zactionzonelist[zactionzonelist.length] = {'name':'Sliding Door','helpurl':'https://www.Roomz.com/wiki/sliding-doors-action-zones/', 'defaulteditform':'0'};
-		zactionzonelist[zactionzonelist.length] = {'name':'Swinging Door','helpurl':'https://www.Roomz.com/wiki/swinging-doors-action-zone/', 'defaulteditform':'0'};
+		zactionzonelist[zactionzonelist.length] = {'name':'Load Zone','helpurl':'https://www.walktheweb.com/wiki/load-zone-action-zones/', 'defaulteditform':'0'};
+		zactionzonelist[zactionzonelist.length] = {'name':'Unload Zone','helpurl':'https://www.walktheweb.com/wiki/load-zone-action-zones/', 'defaulteditform':'0'};
+		zactionzonelist[zactionzonelist.length] = {'name':'Sliding Door','helpurl':'https://www.walktheweb.com/wiki/sliding-doors-action-zones/', 'defaulteditform':'0'};
+		zactionzonelist[zactionzonelist.length] = {'name':'Swinging Door','helpurl':'https://www.walktheweb.com/wiki/swinging-doors-action-zone/', 'defaulteditform':'0'};
 		zactionzonelist[zactionzonelist.length] = {'name':'Click Activated Sliding Door','helpurl':'', 'defaulteditform':'0'};
 		zactionzonelist[zactionzonelist.length] = {'name':'Rotate','helpurl':'', 'defaulteditform':'0'};
 		zactionzonelist[zactionzonelist.length] = {'name':'Load Animations','helpurl':'', 'defaulteditform':'0'};
