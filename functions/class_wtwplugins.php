@@ -1,6 +1,6 @@
 <?php
 class wtwplugins {
-	/* wtwplugins class for roomz plugins to have easy access to common used functions for reading, scrubbing data, and database interaction */
+	/* wtwplugins class for WalkTheWeb plugins to have easy access to common used functions for reading, scrubbing data, and database interaction */
 	protected static $_instance = null;
 	
 	public static function instance() {
@@ -216,6 +216,16 @@ class wtwplugins {
 		return $wtwdb->checkNumber($val, $defaultval);
 	}
 
+	public function getMaximumFileUploadSize() {  
+		global $wtwdb;
+		return $wtwdb->getMaximumFileUploadSize();
+	}  
+
+	public function convertPHPSizeToBytes($zsize) {
+		global $wtwdb;
+		return $wtwdb->convertPHPSizeToBytes($zsize);
+	}
+	
 	public function checkAlphaNumeric($zid) {
 		global $wtwdb;
 		return $wtwdb->checkAlphaNumeric($zid);
@@ -289,6 +299,11 @@ class wtwplugins {
 		return $wtwdb->userExists($zuserid);
 	}
 
+	public function verifyFolderExists($zfolder) {
+		global $wtwdb;
+		return $wtwdb->verifyFolderExists($zfolder);
+	}
+	
 	public function getSessionUserID() {
 		global $wtwdb;
 		try {
@@ -327,13 +342,13 @@ class wtwplugins {
 	}
 
 	public function getFilefromURL($zfromurl, $zfilepath, $zfilename) {
-		/* save file using any available method fopen, curl, or ftp (added soon) */
+		/* save file using any available method fopen or curl */
 		global $wtwdb;
 		return $wtwdb->getFilefromURL($zfromurl, $zfilepath, $zfilename);
 	}
 
 	public function openFilefromURL($zfromurl, $zuseincludepath=false, $zcontext=null) {
-		/* open file using any available method fopen, curl, or ftp (added soon) */
+		/* open file using any available method fopen or curl */
 		global $wtwdb;
 		return $wtwdb->openFilefromURL($zfromurl, $zuseincludepath, $zcontext);
 	}
@@ -694,6 +709,14 @@ class wtwplugins {
 			$jsdata .= "		}\r\n";
 			$jsdata .= "	}\r\n";
 
+			$jsdata .= "	WTWJS.prototype.pluginsHudLoginLoadAvatarsArray = function(zfilter, zdefaultdisplayname) {\r\n";
+			$jsdata .= "		try {\r\n";
+			$jsdata .= $this->getScriptFunction('hudloginloadavatarsarray');
+			$jsdata .= "		} catch (ex) {\r\n";
+			$jsdata .= "			WTW.log('core-functions-class_wtwplugins.php-pluginsHudLoginLoadAvatarsArray=' + ex.message);\r\n";
+			$jsdata .= "		}\r\n";
+			$jsdata .= "	}\r\n";
+
 			$jsdata .= "	WTWJS.prototype.pluginsOnMessage = function(zevent) {\r\n";
 			$jsdata .= "		var zsafe = false;\r\n";
 			$jsdata .= "		try {\r\n";
@@ -750,15 +773,6 @@ class wtwplugins {
 			$jsdata .= "		} catch (ex) {\r\n";
 			$jsdata .= "			WTW.log('core-functions-class_wtwplugins.php-pluginsDownloadUserAvatarVersionResponse=' + ex.message);\r\n";
 			$jsdata .= "		}\r\n";
-			$jsdata .= "	}\r\n";
-
-			$jsdata .= "	WTWJS.prototype.pluginsGetMyAvatarList = function(zloaddefault, zeditmode) {\r\n";
-			$jsdata .= "		try {\r\n";
-			$jsdata .= 	$this->returnScriptFunction('getmyavatarlist','zloaddefault');
-			$jsdata .= "		} catch (ex) {\r\n";
-			$jsdata .= "			WTW.log('core-functions-class_wtwplugins.php-pluginsGetMyAvatarList=' + ex.message);\r\n";
-			$jsdata .= "		}\r\n";
-			$jsdata .= "		return zloaddefault;\r\n";
 			$jsdata .= "	}\r\n";
 
 			$jsdata .= "	WTWJS.prototype.pluginsAvatarBeforeCreate = function(zavatarname, zavatardef) {\r\n";
@@ -869,12 +883,13 @@ class wtwplugins {
 			$jsdata .= "		}\r\n";
 			$jsdata .= "	}\r\n";
 
-			$jsdata .= "	WTWJS.prototype.pluginsOnClick = function(zpickedname) {\r\n";
+			$jsdata .= "	WTWJS.prototype.pluginsInputClick = function(zpickedname) {\r\n";
 			$jsdata .= "		try {\r\n";
-			$jsdata .= 	$this->getScriptFunction('onclick');
+			$jsdata .= 	$this->returnScriptFunction('inputclick','zpickedname');
 			$jsdata .= "		} catch (ex) {\r\n";
-			$jsdata .= "			WTW.log('core-functions-class_wtwplugins.php-pluginsOnClick=' + ex.message);\r\n";
+			$jsdata .= "			WTW.log('core-functions-class_wtwplugins.php-pluginsInputClick=' + ex.message);\r\n";
 			$jsdata .= "		}\r\n";
+			$jsdata .= "		return zpickedname;\r\n";
 			$jsdata .= "	}\r\n";
 
 			$jsdata .= "	WTWJS.prototype.pluginsHudLoginClick = function(zmoldname) {\r\n";
@@ -1179,20 +1194,20 @@ class wtwplugins {
 			$jsdata .= "		}\r\n";
 			$jsdata .= "	}\r\n";
 
-			$jsdata .= "	WTWJS.prototype.pluginsOpenColorSelector = function(zmold, zmoldname, zshape, zcolorgroup) {\r\n";
+			$jsdata .= "	WTWJS.prototype.pluginsOpenMoldColorSelector = function(zmold, zmoldname, zshape, zcolorgroup) {\r\n";
 			$jsdata .= "		try {\r\n";
-			$jsdata .= 	$this->returnScriptFunction('opencolorselector', 'zmold');
+			$jsdata .= 	$this->returnScriptFunction('openmoldcolorselector', 'zmold');
 			$jsdata .= "		} catch (ex) {\r\n";
-			$jsdata .= "			WTW.log('core-functions-class_wtwplugins.php-pluginsOpenColorSelector=' + ex.message);\r\n";
+			$jsdata .= "			WTW.log('core-functions-class_wtwplugins.php-pluginsOpenMoldColorSelector=' + ex.message);\r\n";
 			$jsdata .= "		}\r\n";
 			$jsdata .= "		return zmold;\r\n";
 			$jsdata .= "	}\r\n";
 
-			$jsdata .= "	WTWJS.prototype.pluginsSetColor = function(zmoldname, zcolorgroup, zemissivecolor, zdiffusecolor, zspecularcolor, zambientcolor) {\r\n";
+			$jsdata .= "	WTWJS.prototype.pluginsSetMoldColor = function(zmoldname, zcolorgroup, zemissivecolor, zdiffusecolor, zspecularcolor, zambientcolor) {\r\n";
 			$jsdata .= "		try {\r\n";
-			$jsdata .= 	$this->getScriptFunction('setcolor');
+			$jsdata .= 	$this->getScriptFunction('resetmoldcolor');
 			$jsdata .= "		} catch (ex) {\r\n";
-			$jsdata .= "			WTW.log('core-functions-class_wtwplugins.php-pluginsSetColor=' + ex.message);\r\n";
+			$jsdata .= "			WTW.log('core-functions-class_wtwplugins.php-pluginsSetMoldColor=' + ex.message);\r\n";
 			$jsdata .= "		}\r\n";
 			$jsdata .= "	}\r\n";
 
