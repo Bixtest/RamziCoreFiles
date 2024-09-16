@@ -1,6 +1,6 @@
-/* All code is Copyright 2013-2023 Bixma */
-/* All code is patent */
-
+/* All code is Copyright 2013-2023 Aaron Scott Dishno Ed.D., HTTP3D Inc. - WalkTheWeb, and the contributors */
+/* "3D Browsing" is a USPTO Patented (Serial # 9,940,404) and Worldwide PCT Patented Technology by Aaron Scott Dishno Ed.D. and HTTP3D Inc. */
+/* Read the included GNU Ver 3.0 license file for details and additional release information. */
 
 /* these functions create the various avatars and place holders */
 
@@ -139,7 +139,6 @@ WTWJS.prototype.addAvatarPlaceholder = function(zavatarname, zavatardef) {
 		}
 		zavatarscaleold.position = new BABYLON.Vector3(zpositionx, zpositiony, zpositionz);
 		zavatarscaleold.rotation = new BABYLON.Vector3(WTW.getRadians(zrotationx), WTW.getRadians(zrotationy), WTW.getRadians(zrotationz));
-		zavatarscaleold.scaling = new BABYLON.Vector3(zscalingx, zscalingy, zscalingz);
 		
 		/* this box is the parent to the cameras as needed */
 		var zavatarcamera = WTW.getMeshOrNodeByID(zavatarname + '-camera');
@@ -381,7 +380,6 @@ WTWJS.prototype.addAvatar3DObject = function(zavatarname, zavatardef) {
 			zavatarscaleold = new BABYLON.TransformNode(zavatarname + '-scaleold');
 			zavatarscaleold.parent = zavatar;
 		}
-		zavatarscaleold.scaling = new BABYLON.Vector3(zscalingx, zscalingy, zscalingz);
 		zavatarscaleold.rotation = new BABYLON.Vector3(WTW.getRadians(zrotationx), WTW.getRadians(zrotationy), WTW.getRadians(zrotationz));
 		zavatarscaleold.position = new BABYLON.Vector3(zpositionx, zpositiony, zpositionz);
 		
@@ -412,7 +410,7 @@ WTWJS.prototype.addAvatar3DObject = function(zavatarname, zavatardef) {
 		}
 
 		var zobjectanimations = null;
-		var zobjectfolder = '/content/system/avatars/male/';
+		var zobjectfolder = '/content/uploads/avatars/3b9bt5c70igtmqux/';
 		var zobjectfile = 'maleidle.babylon';
 		var zavatarparts = [];
 		var zavataranimationdefs = [];
@@ -464,6 +462,7 @@ WTWJS.prototype.addAvatar3DObject = function(zavatarname, zavatardef) {
 								zresults.meshes[i].isPickable = true;
 								zresults.meshes[i].name = zchildmoldname;
 								zresults.meshes[i].id = zchildmoldname;
+								zresults.meshes[i].renderingGroupId = 1;
 //								zresults.meshes[i].convertToUnIndexedMesh();
 								zresults.meshes[i].isVisible = false;
 								
@@ -506,12 +505,11 @@ WTWJS.prototype.addAvatar3DObject = function(zavatarname, zavatardef) {
 									zresults.meshes[i].material.dispose();
 									zresults.meshes[i].material = zcovering;
 								}
-								WTW.registerMouseOver(zresults.meshes[i]);
 								if (zresults.meshes[i].parent == null) {
 									zresults.meshes[i].parent = zavatarparent;
 								}
 								if (WTW.shadows != null) {
-									WTW.shadows.getShadowMap().renderList.push(zresults.meshes[i]);
+//									WTW.shadows.getShadowMap().renderList.push(zresults.meshes[i]);
 								}
 								if (zresults.meshes[i].material != null) {
 									zresults.meshes[i].material.unfreeze();
@@ -569,7 +567,6 @@ WTWJS.prototype.addAvatar3DObject = function(zavatarname, zavatardef) {
 								var zchildmoldname = zavatarname + '-' + zmeshname;
 								zresults.skeletons[i].name = zchildmoldname;
 								zresults.skeletons[i].id = zchildmoldname;
-								WTW.registerMouseOver(zresults.skeletons[i]);
 								if (zresults.skeletons[i].parent == null) {
 									zresults.skeletons[i].scaling = new BABYLON.Vector3(zscalingx,zscalingy,zscalingz);
 								}
@@ -841,9 +838,8 @@ WTWJS.prototype.addAvatarForEdit = function(zavatarname, zavatardef) {
 			zavatarscaleold = new BABYLON.TransformNode(zavatarname + '-scaleold');
 			zavatarscaleold.parent = zavatar;
 		}
-		zavatarscaleold.scaling = new BABYLON.Vector3(zscalingx, zscalingy, zscalingz);
-		zavatarscale.rotation = new BABYLON.Vector3(WTW.getRadians(zrotationx), WTW.getRadians(zrotationy), WTW.getRadians(zrotationz));
-		zavatarscale.position = new BABYLON.Vector3(zpositionx, zpositiony, zpositionz);
+		zavatarscaleold.rotation = new BABYLON.Vector3(WTW.getRadians(zrotationx), WTW.getRadians(zrotationy), WTW.getRadians(zrotationz));
+		zavatarscaleold.position = new BABYLON.Vector3(zpositionx, zpositiony, zpositionz);
 		
 		/* this box is the parent to the cameras as needed */
 		var zavatarcamera = WTW.getMeshOrNodeByID(zavatarname + '-camera');
@@ -872,7 +868,7 @@ WTWJS.prototype.addAvatarForEdit = function(zavatarname, zavatardef) {
 		}
 
 		var zobjectanimations = null;
-		var zobjectfolder = '/content/system/avatars/male/';
+		var zobjectfolder = '/content/uploads/avatars/3b9bt5c70igtmqux/';
 		var zobjectfile = 'maleidle.babylon';
 		var zavatarparts = [];
 		var zavataranimationdefs = [];
@@ -925,6 +921,7 @@ WTWJS.prototype.addAvatarForEdit = function(zavatarname, zavatardef) {
 								zresults.meshes[i].isPickable = true;
 								zresults.meshes[i].name = zchildmoldname;
 								zresults.meshes[i].id = zchildmoldname;
+								zresults.meshes[i].renderingGroupId = 1;
 //								zresults.meshes[i].convertToUnIndexedMesh();
 								zresults.meshes[i].isVisible = true;
 								
@@ -996,12 +993,11 @@ WTWJS.prototype.addAvatarForEdit = function(zavatarname, zavatardef) {
 									zresults.meshes[i].material.dispose();
 									zresults.meshes[i].material = zcovering;
 								}
-								WTW.registerMouseOver(zresults.meshes[i]);
 								if (zresults.meshes[i].parent == null) {
 									zresults.meshes[i].parent = zavatarparent;
 								}
 								if (WTW.shadows != null) {
-									WTW.shadows.getShadowMap().renderList.push(zresults.meshes[i]);
+//									WTW.shadows.getShadowMap().renderList.push(zresults.meshes[i]);
 								}
 								if (zresults.meshes[i].material != null) {
 									zresults.meshes[i].material.unfreeze();
@@ -1058,7 +1054,6 @@ WTWJS.prototype.addAvatarForEdit = function(zavatarname, zavatardef) {
 								var zchildmoldname = zavatarname + '-' + zmeshname;
 								zresults.skeletons[i].name = zchildmoldname;
 								zresults.skeletons[i].id = zchildmoldname;
-								WTW.registerMouseOver(zresults.skeletons[i]);
 								if (zresults.skeletons[i].parent == null) {
 									zresults.skeletons[i].scaling = new BABYLON.Vector3(zscalingx,zscalingy,zscalingz);
 								}

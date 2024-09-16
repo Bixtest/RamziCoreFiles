@@ -1,6 +1,6 @@
 <?php
 class wtwuploads {
-	/* wtwuploads class for roomz functions for uploading and retrieving files */
+	/* wtwuploads class for WalkTheWeb functions for uploading and retrieving files */
 	protected static $_instance = null;
 	
 	public static function instance() {
@@ -23,27 +23,17 @@ class wtwuploads {
 	public function copyFile($zfile1, $zfilepath1, $zfile2, $zfilepath2, $zcommunityid, $zbuildingid, $zthingid) {
 		/* copies a file from one location to another - used after upload to place the temp file to the correct final location */
 		global $wtwhandlers;
-		$serror = "";
+		$zerror = "";
 		try {
 			$wtwhandlers->checkContentFolders($zcommunityid, $zbuildingid, $zthingid, '');
 			if (!file_exists($zfilepath1.$zfile1)) {
-				$serror = "Source File not Found. ".$zfilepath1.$zfile1;
+				$zerror = "Source File not Found. ".$zfilepath1.$zfile1;
 			}
-			if (!file_exists($zfilepath2)) {
-				umask(0);
-				mkdir($zfilepath2, octdec(wtw_chmod), true);
-				chmod($zfilepath2, octdec(wtw_chmod));
-				if (defined('wtw_umask')) {
-					/* reset umask */
-					if (wtw_umask != '0') {
-						umask(octdec(wtw_umask));
-					}
-				}
-			}
+			$wtwhandlers->verifyFolderExists($zfilepath2);
 			if (file_exists($zfilepath2.$zfile2)) {
-				$serror = "Destination File Already Exists. ".$zfilepath2.$zfile2;
+				$zerror = "Destination File Already Exists. ".$zfilepath2.$zfile2;
 			}
-			if ($serror == "") {
+			if ($zerror == "") {
 				umask(0);
 				copy($zfilepath1.$zfile1, $zfilepath2.$zfile2);
 				chmod($zfilepath2.$zfile2, octdec(wtw_chmod));
@@ -57,7 +47,7 @@ class wtwuploads {
 		} catch (Exception $e) {
 			$wtwhandlers->serror("core-functions-class_wtwuploads.php-copyFile=".$e->getMessage());
 		}	
-		return $serror;
+		return $zerror;
 	}
 
 	public function deleteFile($zfile1, $zfilepath1, $zcommunityid, $zbuildingid) {
@@ -339,6 +329,11 @@ class wtwuploads {
 		/* function to upload a file to the database - if file is to be stored in the database */
 		global $wtwhandlers;
 		try {
+			$zisimage = false;
+			if (strpos($zfiletype, 'image') > -1 && $zfileextension != 'dds' && $zfileextension != 'hdr' && $zfileextension != 'exr') {
+				$zisimage = true;
+			}
+			$zfileextension = strtolower($zfileextension);
 			$zoriginalid = $wtwhandlers->getRandomString(16,1);
 			$zwebsizeid = $wtwhandlers->getRandomString(16,1);
 			$zthumbnailid = $wtwhandlers->getRandomString(16,1);
@@ -359,14 +354,14 @@ class wtwuploads {
 				}
 			}
 			$zfiledata = null;
-			if (strpos($zfiletype, 'image') > -1) {
+			if ($zisimage) {
 				$zfiledata = addslashes($wtwhandlers->openFilefromURL($zfilepath));
 			}
 			$zissnapshot = strpos($zfilepath, 'snapshot');
 			if (empty($zfiletitle)) {
 				$zfiletitle = $zfilename;
 			}
-			if (strpos($zfiletype, 'image') > -1) {
+			if ($zisimage) {
 				$zimagedetails = getimagesize($zfilepath);
 				$zwidth = $zimagedetails[0];
 				$zheight = $zimagedetails[1];
@@ -379,7 +374,7 @@ class wtwuploads {
 			if (!isset($zfilesize) && empty($zfilesize)) {
 				$zfilesize = "null";
 			}
-			if (strpos($zfiletype, 'image') > -1) {
+			if ($zisimage) {
 				if (!isset($zwidth) && empty($zwidth)) {
 					$zwidth = imagesx($zfiledata);
 					if (!isset($zwidth) && empty($zwidth)) {
@@ -401,7 +396,7 @@ class wtwuploads {
 				$zfilename = $this->avoidDuplicateFileNames($zuploadpath, $zfilename);
 				copy($zfilepath, $zuploadpath.$zfilename);
 			}
-			if (strpos($zfiletype, 'image') > -1) {
+			if ($zisimage) {
 				if ($wtwhandlers->hasValue($zfiledata)) {
 					$this->updateFileInDb($zoriginalid,'original',$zoriginalid,$zwebsizeid,$zthumbnailid,$zfiletitle,$zfilename,$zfileextension,$zfilesize,$zfiletype,$zfiledata,$zwidth,$zheight,$zbrowsepath.$zfilename);
 				} else {
@@ -561,21 +556,11 @@ class wtwuploads {
 			$zuploadpath = $wtwhandlers->contentpath;
 			if ($wtwhandlers->hasValue($_SESSION['wtw_uploadpathid'])) {
 				$pathname = pathinfo('/'.$zfilename);
-				$newfolder = $pathname['filename'];
-				if (!file_exists($wtwhandlers->contentpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$newfolder)) {
-					umask(0);
-					mkdir($wtwhandlers->contentpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$newfolder, octdec(wtw_chmod), true);
-					chmod($wtwhandlers->contentpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$newfolder, octdec(wtw_chmod));
-					if (defined('wtw_umask')) {
-						/* reset umask */
-						if (wtw_umask != '0') {
-							umask(octdec(wtw_umask));
-						}
-					}
-				}
-				$zuploadpath = $zuploadpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$newfolder."/";
-				$zbrowsepath = $wtwhandlers->contenturl."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$newfolder."/";
-				$zobjectfolder = "/content/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$newfolder."/";
+				$znewfolder = $pathname['filename'];
+				$wtwhandlers->verifyFolderExists($wtwhandlers->contentpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$znewfolder);
+				$zuploadpath = $zuploadpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$znewfolder."/";
+				$zbrowsepath = $wtwhandlers->contenturl."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$znewfolder."/";
+				$zobjectfolder = "/content/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$znewfolder."/";
 			}
 			$zfilesize = filesize($zfilepath);
 			if (!isset($zfilesize) && empty($zfilesize)) {
@@ -1499,7 +1484,7 @@ class wtwuploads {
 							limit 1;");
 					}
 				}
-				/* report Franchises change to roomz */
+				/* report Franchises change to WalkTheWeb */
 				$zdisplayname = '';
 				$zemail = '';
 				$zuploadpathid = '';
@@ -1888,6 +1873,7 @@ class wtwuploads {
 			$wtwhandlers->checkContentFolders('', '', '', '');
 			$zitem = $wtwhandlers->getVal("item","");	
 			if ($wtwhandlers->hasValue($_SESSION["wtw_userid"])) {
+				$zmaxfilesize = $wtwhandlers->getMaximumFileUploadSize();
 				$zfilepath = $wtwhandlers->contentpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/media";
 				$zfileurl = $wtwhandlers->contenturl."/uploads/users/".$_SESSION['wtw_uploadpathid']."/media/";
 				$zisvalid = 1;
@@ -1901,7 +1887,7 @@ class wtwuploads {
 					echo "File already exists.";
 					$zisvalid = 0;
 				}
-				if ($zfilesize > 128000000) {
+				if ($zfilesize > $zmaxfilesize) {
 					echo "Your file is too large.";
 					$zisvalid = 0;
 				}
@@ -1939,18 +1925,9 @@ class wtwuploads {
 		try {
 			$wtwhandlers->checkContentFolders('', '', '', '');
 			if ($wtwhandlers->hasValue($_SESSION["wtw_userid"])) {
+				$zmaxfilesize = $wtwhandlers->getMaximumFileUploadSize();
 				$zfilepath = $wtwhandlers->contentpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/media/";
-				if (!file_exists($zfilepath)) {
-					umask(0);
-					mkdir($zfilepath, octdec(wtw_chmod), true);
-					chmod($zfilepath, octdec(wtw_chmod));
-					if (defined('wtw_umask')) {
-						/* reset umask */
-						if (wtw_umask != '0') {
-							umask(octdec(wtw_umask));
-						}
-					}
-				}
+				$wtwhandlers->verifyFolderExists($zfilepath);
 				for ($i = 0; $i < count($zuploadfiles["name"]);$i++) {
 					$zisvalid = 1;
 					$zpastfilename = basename($zuploadfiles["name"][$i]);
@@ -1958,12 +1935,12 @@ class wtwuploads {
 					$zfilesize = $zuploadfiles["size"][$i];
 					$zfiletype = $zuploadfiles["type"][$i];
 					$ztargetfile = $zfilepath."/".$zpastfilename;
-					if ($zfilesize > 128000000) {
+					if ($zfilesize > $zmaxfilesize) {
 						$serror .= "Your file is too large.";
 						$zisvalid = 0;
 					}
-					if ((!strpos($zitem, 'sound') > -1) && (!strpos($zitem, 'audio') > -1) && strtolower($zfileextension) != "jpg" && strtolower($zfileextension) != "png" && strtolower($zfileextension) != "jpeg" && strtolower($zfileextension) != "gif" && strtolower($zfileextension) != "mp4" && strtolower($zfileextension) != "webm" && strtolower($zfileextension) != "ogv") {
-						echo "Only JPG, JPEG, PNG, GIF, MP4, OGV, and WEBM files are allowed.";
+					if ((!strpos($zitem, 'sound') > -1) && (!strpos($zitem, 'audio') > -1) && strtolower($zfileextension) != "jpg" && strtolower($zfileextension) != "png" && strtolower($zfileextension) != "jpeg" && strtolower($zfileextension) != "gif" && strtolower($zfileextension) != "mp4" && strtolower($zfileextension) != "webm" && strtolower($zfileextension) != "ogv" && strtolower($zfileextension) != "dds" && strtolower($zfileextension) != "hdr" && strtolower($zfileextension) != "exr") {
+						echo "Only JPG, JPEG, PNG, GIF, MP4, OGV, DDS, HDR, EXR, and WEBM files are allowed.";
 						$zisvalid = 0;
 					} elseif ((strpos($zitem, 'sound') > -1) && strtolower($zfileextension) != "wav" && strtolower($zfileextension) != "mp3" && strtolower($zfileextension) != "wma" && strtolower($zfileextension) != "m4a") {
 						echo "Only WAV, MP3, M4A, and WMA files are allowed.";
@@ -1992,25 +1969,23 @@ class wtwuploads {
 		return $serror;
 	}
 
-	public function uploadObjectFiles($zuploadfiles, $zobjectfilepart) {
+	public function uploadObjectFiles($zuploadfiles, $zobjectfolder, $zobjectfilepart) {
 		/* upload 3D Object supplimentary files - overwrites any existing files for easy updates - remember users may need to clear cache to see changes immediately */
 		global $wtwhandlers;
 		$serror = "";
 		try {
 			$wtwhandlers->checkContentFolders('', '', '', '');
 			if ($wtwhandlers->hasValue($_SESSION["wtw_userid"])) {
+				$zmaxfilesize = $wtwhandlers->getMaximumFileUploadSize();
+
+				/* can add one of your own files */
 				$zfilepath = $wtwhandlers->contentpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$zobjectfilepart;
-				if (!file_exists($zfilepath)) {
-					umask(0);
-					mkdir($zfilepath, octdec(wtw_chmod), true);
-					chmod($zfilepath, octdec(wtw_chmod));
-					if (defined('wtw_umask')) {
-						/* reset umask */
-						if (wtw_umask != '0') {
-							umask(octdec(wtw_umask));
-						}
-					}
+
+				if (isset($zobjectfolder) && !empty($zobjectfolder) && $wtwhandlers->isUserInRole("Admin")) {
+					/* admins can add files to other folders on server */
+					$zfilepath = $wtwhandlers->rootpath.$zobjectfolder;
 				}
+				$wtwhandlers->verifyFolderExists($zfilepath);
 				for ($i = 0; $i < count($zuploadfiles["name"]);$i++) {
 					$zisvalid = 1;
 					$zpastfilename = basename($zuploadfiles["name"][$i]);
@@ -2018,10 +1993,10 @@ class wtwuploads {
 					$zfilesize = $zuploadfiles["size"][$i];
 					$zfiletype = $zuploadfiles["type"][$i];
 					$ztargetfile = $zfilepath."/".$zpastfilename;
-					if ($zfilesize > 128000000) {
-						$serror .= "Your file is too large.";
-						$zisvalid = 0;
-					}
+//					if ($zfilesize > $zmaxfilesize) {
+//						$serror .= "Your file is too large.";
+//						$zisvalid = 0;
+//					}
 					if (strtolower($zfileextension) != "babylon" && strtolower($zfileextension) != "manifest" && strtolower($zfileextension) != "txt" && strtolower($zfileextension) != "jpg" && strtolower($zfileextension) != "png" && strtolower($zfileextension) != "jpeg" && strtolower($zfileextension) != "gif" && strtolower($zfileextension) != "tif" && strtolower($zfileextension) != "wav" && strtolower($zfileextension) != "mp3" && strtolower($zfileextension) != "mp4" && strtolower($zfileextension) != "webm" && strtolower($zfileextension) != "ogv" && strtolower($zfileextension) != "bin" && strtolower($zfileextension) != "gltf" && strtolower($zfileextension) != "bgltf" && strtolower($zfileextension) != "glb" && strtolower($zfileextension) != "blend" && strtolower($zfileextension) != "blend1" && strtolower($zfileextension) != "obj" && strtolower($zfileextension) != "fbx" && strtolower($zfileextension) != "log") {
 						$serror .= "Only babylon, gltf, glb, obj, blend, and image files are allowed at this time.";
 						$zisvalid = 0;
@@ -2150,17 +2125,7 @@ class wtwuploads {
 			$wtwhandlers->checkContentFolders('', '', '', '');
 			if ($wtwhandlers->hasValue($_SESSION["wtw_userid"])) {
 				$zfilepath = $wtwhandlers->contentpath."/uploads/".$zwebtype."/".$zwebid;
-				if (!file_exists($zfilepath)) {
-					umask(0);
-					mkdir($zfilepath, octdec(wtw_chmod), true);
-					chmod($zfilepath, octdec(wtw_chmod));
-					if (defined('wtw_umask')) {
-						/* reset umask */
-						if (wtw_umask != '0') {
-							umask(octdec(wtw_umask));
-						}
-					}
-				}
+				$wtwhandlers->verifyFolderExists($zfilepath);
 				for ($i = 0; $i < count($zuploadfiles["name"]);$i++) {
 					$zisvalid = 1;
 					$zpastfilename = basename($zuploadfiles["name"][$i]);
@@ -2258,18 +2223,23 @@ class wtwuploads {
 						and webid='".$zwebid."';");
 			}
 		} catch (Exception $e) {
-			$wtwhandlers->serror("core-functions-class_wtwuploads.php-deleteObjectFile=".$e->getMessage());
+			$wtwhandlers->serror("core-functions-class_wtwuploads.php-deleteJavaScriptFile=".$e->getMessage());
 		}
 		return $serror;
 	}
 
-	public function deleteObjectFile($zfilename, $zobjectfilepart) {
+	public function deleteObjectFile($zfilename, $zobjectfolder, $zobjectfilepart) {
 		/* deletes the 3D Object file - used to assist with overwrite functions */
 		global $wtwhandlers;
 		$serror = "";
 		try {
 			$zfilepath = $wtwhandlers->contentpath."/uploads/users/".$_SESSION['wtw_uploadpathid']."/objects/".$zobjectfilepart."/".$zfilename;
-			if (file_exists($zfilepath)) {
+
+			if (file_exists($wtwhandlers->rootpath.$zobjectfolder.$zfilename) && $wtwhandlers->isUserInRole("Admin")) {
+				/* admins can delete in other folders on server */
+				unlink($wtwhandlers->rootpath.$zobjectfolder.$zfilename);
+			} else if (file_exists($zfilepath)) {
+				/* can delete if one of your own files */
 				unlink($zfilepath);
 			}
 		} catch (Exception $e) {
@@ -2393,6 +2363,15 @@ class wtwuploads {
 								or u1.filetype like '%log%' 
 								or u1.filetype like '%txt%' 
 								or u1.filetype like '%rtf%')
+						when '".$zcategory."' = 'file' then
+							(u1.filetype like '%pdf%' 
+								or u1.filetype like '%doc%' 
+								or u1.filetype like '%log%' 
+								or u1.filetype like '%txt%' 
+								or u1.filetype like '%rtf%'
+								or u1.fileextension = 'dds'
+								or u1.fileextension = 'hdr'
+								or u1.fileextension = 'exr')
 						else
 							(u1.thumbnailid = u1.uploadid
 							and u1.filetype like '%image%')

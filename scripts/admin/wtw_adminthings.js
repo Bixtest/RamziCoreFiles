@@ -1,6 +1,6 @@
-/* All code is Copyright 2013-2023 Bixma */
-/* All code is patent */
-
+/* All code is Copyright 2013-2023 Aaron Scott Dishno Ed.D., HTTP3D Inc. - WalkTheWeb, and the contributors */
+/* "3D Browsing" is a USPTO Patented (Serial # 9,940,404) and Worldwide PCT Patented Technology by Aaron Scott Dishno Ed.D. and HTTP3D Inc. */
+/* Read the included GNU Ver 3.0 license file for details and additional release information. */
 
 /* these functions are used to administer a website in admin mode only */
 
@@ -46,12 +46,23 @@ WTWJS.prototype.openThingForm = async function(zthingid) {
 					}
 					dGet('wtw_showcommunityname').innerHTML = 'Edit 3D Thing';
 					dGet('wtw_showcommunityname').style.cursor = 'default';
+					dGet('wtw_showcommunitynamemobile').innerHTML = 'Edit 3D Thing';
+					dGet('wtw_showcommunitynamemobile').style.cursor = 'default';
 					if (dGet('wtw_tthingname').value == '') {
 						dGet('wtw_showbuildingname').innerHTML = '3D Thing';
 						dGet('wtw_showbuildingname').style.cursor = 'default';
+						dGet('wtw_showbuildingnamemobile').innerHTML = '3D Thing';
+						dGet('wtw_showbuildingnamemobile').style.cursor = 'default';
 					} else {
 						dGet('wtw_showbuildingname').innerHTML = WTW.decode(dGet('wtw_tthingname').value);
-						dGet('wtw_showbuildingname').style.cursor = 'pointer';
+						dGet('wtw_showbuildingnamemobile').innerHTML = 'Closest 3D Thing: <b>' + WTW.decode(dGet('wtw_tthingname').value) + '</b>';
+						if (WTW.adminView == 1) {
+							dGet('wtw_showbuildingname').style.cursor = 'pointer';
+							dGet('wtw_showbuildingnamemobile').style.cursor = 'pointer';
+						} else {
+							dGet('wtw_showbuildingname').style.cursor = 'default';
+							dGet('wtw_showbuildingnamemobile').style.cursor = 'default';
+						}
 					}
 					window.setTimeout(function() {
 						WTW.hide('wtw_loadingthingform');
@@ -98,12 +109,23 @@ WTWJS.prototype.loadThingForm = async function(zthingid) {
 					}
 					dGet('wtw_showcommunityname').innerHTML = 'Edit 3D Thing';
 					dGet('wtw_showcommunityname').style.cursor = 'default';
+					dGet('wtw_showcommunitynamemobile').innerHTML = 'Edit 3D Thing';
+					dGet('wtw_showcommunitynamemobile').style.cursor = 'default';
 					if (dGet('wtw_tthingname').value == '') {
 						dGet('wtw_showbuildingname').innerHTML = '3D Thing';
 						dGet('wtw_showbuildingname').style.cursor = 'default';
+						dGet('wtw_showbuildingnamemobile').innerHTML = '3D Thing';
+						dGet('wtw_showbuildingnamemobile').style.cursor = 'default';
 					} else {
 						dGet('wtw_showbuildingname').innerHTML = WTW.decode(dGet('wtw_tthingname').value);
-						dGet('wtw_showbuildingname').style.cursor = 'pointer';
+						dGet('wtw_showbuildingnamemobile').innerHTML = 'Closest 3D Thing: <b>' + WTW.decode(dGet('wtw_tthingname').value) + '</b>';
+						if (WTW.adminView == 1) {
+							dGet('wtw_showbuildingname').style.cursor = 'pointer';
+							dGet('wtw_showbuildingnamemobile').style.cursor = 'pointer';
+						} else {
+							dGet('wtw_showbuildingname').style.cursor = 'default';
+							dGet('wtw_showbuildingnamemobile').style.cursor = 'default';
+						}
 					}
 				}
 			}
@@ -153,6 +175,7 @@ WTWJS.prototype.submitthingForm = async function(w) {
 								WTW.things[i].thinginfo.versiondesc = WTW.encode(dGet('wtw_tinfothingversiondesc').value);
 								WTW.things[i].thinginfo.analytics = dGet('wtw_tthinganalyticsid').value;
 								dGet('wtw_showbuildingname').innerHTML = dGet('wtw_tthingname').value;
+								dGet('wtw_showbuildingnamemobile').innerHTML = 'Closest 3D Thing: <b>' + dGet('wtw_tthingname').value + '</b>';
 							}
 						}
 					}
@@ -324,7 +347,7 @@ WTWJS.prototype.getSelectThingsList = async function(zfilter) {
 			if (zfilter == 'all') {
 				zlistthings += "selected";
 			}
-			zlistthings += " wtw-rightradius' onclick=\"WTW.setThingsListTab('all');\">All</div><div class='wtw-localbuttonrightpad'></div><div class='wtw-clear'></div>\r\n";
+			zlistthings += " wtw-rightradius' onclick=\"WTW.setThingsListTab('all');\">All</div><div class='wtw-localbuttonrightpad'></div><div class='wtw-clear'></div><div class='wtw-mainmenuvalue'>Admins and Developer Roles can edit <b>All</b> 3D Things on this server.</div><hr /><div class='wtw-clear'></div>\r\n";
 		} else {
 			zlistthings = '<br /><br />';
 		}
@@ -423,7 +446,7 @@ WTWJS.prototype.thingSearchShowThing = function(newthingid) {
 }
 
 WTWJS.prototype.openShareThingForm = async function() {
-	/* share 3D Thing is used to send a copy to roomz for others to search and download copies of their own */
+	/* share 3D Thing is used to send a copy to WalkTheWeb for others to search and download copies of their own */
 	try {
 		dGet('wtw_tsharethingtempname').value = '';
 		dGet('wtw_tsharethingdescription').value = '';

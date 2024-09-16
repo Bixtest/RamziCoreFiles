@@ -1,5 +1,7 @@
-/* All code is Copyright 2013-2023 Bixma */
-/* All code is patent */
+/* All code is Copyright 2013-2023 Aaron Scott Dishno Ed.D., HTTP3D Inc. - WalkTheWeb, and the contributors */
+/* "3D Browsing" is a USPTO Patented (Serial # 9,940,404) and Worldwide PCT Patented Technology by Aaron Scott Dishno Ed.D. and HTTP3D Inc. */
+/* Read the included GNU Ver 3.0 license file for details and additional release information. */
+
 /* these functions are used to administer a website in admin mode only */
 /* action zones are used to run functions based on avatar movement (execute scripts, animations, sounds, lighting changes, triggers, etc...) */
 /* core action zones include load zones (fetch and load molds when the avatar enters a region), doors, and dynamically loading scripts */
@@ -69,6 +71,7 @@ WTWJS.prototype.showActionZone = function(zactionzoneind) {
 				zactionzone.enableEdgesRendering(); 
 				zactionzone.edgesWidth = 4.0;
 				zactionzone.edgesColor = new BABYLON.Color4(0, 0, 1, 1);
+				zactionzone.renderingGroupId = 1;
 			}
 			if (zactionzoneaxle != null) {
 				zactionzoneaxle.isVisible = true;
@@ -125,6 +128,7 @@ WTWJS.prototype.hideActionZone = function(zactionzoneind) {
 			if (zactionzone != null) {
 				zactionzone.isVisible = false;
 				zactionzone.disableEdgesRendering(); 
+				zactionzone.renderingGroupId = 0;
 			}
 			if (zactionzoneaxle != null) {
 				zactionzoneaxle.isVisible = false;

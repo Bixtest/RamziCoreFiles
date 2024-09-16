@@ -1735,6 +1735,86 @@ class wtwavatars {
 		return $zresponse;
 	}
 
+	public function saveAvatarsInGroup($zavatarid, $zavatargroupid, $zavatarsingroupid, $zchecked) {
+		/* saves the avatar groups based on avatar information form */
+		global $wtwhandlers;
+		$zresponse = array(
+			'serror'=>'',
+			'avatarsingroupid'=>$zavatarsingroupid
+		);
+		try {
+			$zfoundavatarsingroupid = '';
+			if (isset($zavatarsingroupid) && !empty($zavatarsingroupid)) {
+				$zresults = $wtwhandlers->query("
+					select avatarsingroupid
+					from ".wtw_tableprefix."avatarsingroups
+					where avatarsingroupid='".$zavatarsingroupid."'
+						and avatarid='".$zavatarid."'
+					limit 1;");
+				foreach ($zresults as $zrow) {
+					$zfoundavatarsingroupid = $zrow["avatarsingroupid"];
+				}
+			}
+			if (isset($zfoundavatarsingroupid) && !empty($zfoundavatarsingroupid)) {
+				if ($zchecked == '1') {
+					$wtwhandlers->query("
+						update ".wtw_tableprefix."avatarsingroups
+						set updatedate=now(),
+							updateuserid='".$wtwhandlers->userid."',
+							deleteddate=null,
+							deleteduserid='',
+							deleted=0
+						where avatarsingroupid='".$zfoundavatarsingroupid."';
+					");
+				} else {
+					$wtwhandlers->query("
+						update ".wtw_tableprefix."avatarsingroups
+						set updatedate=now(),
+							updateuserid='".$wtwhandlers->userid."',
+							deleteddate=now(),
+							deleteduserid='".$wtwhandlers->userid."',
+							deleted=1
+						where avatarsingroupid='".$zfoundavatarsingroupid."';
+					");
+				}
+			} else {
+				if ($zchecked == '1') {
+					/* add new record */
+					$zavatarsingroupid = $wtwhandlers->getRandomString(16,1);
+					$wtwhandlers->query("
+						insert into ".wtw_tableprefix."avatarsingroups
+						   (avatarsingroupid,
+						    avatarid,
+							avatargroupid,
+							createdate,
+							createuserid,
+							updatedate,
+							updateuserid)
+						values
+						   ('".$zavatarsingroupid."',
+						    '".$zavatarid."',
+							'".$zavatargroupid."',
+							now(),
+							'".$wtwhandlers->userid."',
+							now(),
+							'".$wtwhandlers->userid."');
+					");
+					$zresponse = array(
+						'serror'=>'',
+						'avatarsingroupid'=>$zavatarsingroupid
+					);
+				}
+			}
+		} catch (Exception $e) {
+			$wtwhandlers->serror("core-functions-class_wtwavatars.php-saveAvatarsInGroup=".$e->getMessage());
+			$zresponse = array(
+				'serror'=>$e->getMessage(),
+				'avatarsingroupid'=>$zavatarsingroupid
+			);
+		}
+		return $zresponse;
+	}
+
 	public function saveAvatarScaling($zavatarid, $zpositionx, $zpositiony, $zpositionz, $zscalingx, $zscalingy, $zscalingz, $zrotationx, $zrotationy, $zrotationz) {
 		/* saves the avatar information (Not User Avatar, just the starting avatar you can choose) - admin function */
 		global $wtwhandlers;
@@ -2096,18 +2176,9 @@ class wtwavatars {
 		try {
 			$wtwhandlers->checkContentFolders('', '', '', '');
 			if ($wtwhandlers->hasPermission(array("admin","developer","architect","graphics artist","host"))) {
+				$zmaxfilesize = $wtwhandlers->getMaximumFileUploadSize();
 				$zfilepath = wtw_rootpath.$zobjectfolder;
-				if (!file_exists($zfilepath)) {
-					umask(0);
-					mkdir($zfilepath, octdec(wtw_chmod), true);
-					chmod($zfilepath, octdec(wtw_chmod));
-					if (defined('wtw_umask')) {
-						/* reset umask */
-						if (wtw_umask != '0') {
-							umask(octdec(wtw_umask));
-						}
-					}
-				}
+				$wtwhandlers->verifyFolderExists($zfilepath);
 				if ($wtwhandlers->endsWith($zfilepath, "/") == false) {
 					$zfilepath .= "/";
 				}
@@ -2118,7 +2189,7 @@ class wtwavatars {
 				$zfiletype = $zuploadfile["type"];
 				$zfilename = $wtwhandlers->getRandomString(16,1).".".$zfileextension;
 				$ztargetfile = $zfilepath.$zpastfilename;
-				if ($zfilesize > 128000000) {
+				if ($zfilesize > $zmaxfilesize) {
 					$zresponse = array(
 						'serror'=> "Your file is too large.",
 						'objectfolder'=> '',
@@ -2186,18 +2257,9 @@ class wtwavatars {
 		try {
 			$wtwhandlers->checkContentFolders('', '', '', $zavatarid);
 			if ($wtwhandlers->hasPermission(array("admin","developer","architect","graphics artist","host"))) {
+				$zmaxfilesize = $wtwhandlers->getMaximumFileUploadSize();
 				$zfilepath = wtw_rootpath.$zobjectfolder;
-				if (!file_exists($zfilepath)) {
-					umask(0);
-					mkdir($zfilepath, octdec(wtw_chmod), true);
-					chmod($zfilepath, octdec(wtw_chmod));
-					if (defined('wtw_umask')) {
-						/* reset umask */
-						if (wtw_umask != '0') {
-							umask(octdec(wtw_umask));
-						}
-					}
-				}
+				$wtwhandlers->verifyFolderExists($zfilepath);
 				if ($wtwhandlers->endsWith($zfilepath, "/") == false) {
 					$zfilepath .= "/";
 				}
@@ -2208,7 +2270,7 @@ class wtwavatars {
 					$zfilesize = $zuploadfiles["size"][$i];
 					$zfiletype = $zuploadfiles["type"][$i];
 					$ztargetfile = $zfilepath.$zpastfilename;
-					if ($zfilesize > 128000000) {
+					if ($zfilesize > $zmaxfilesize) {
 						$zresponse = array(
 							'serror'=> "Your file is too large.",
 							'objectfolder'=> '',

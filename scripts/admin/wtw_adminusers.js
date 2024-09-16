@@ -1,6 +1,6 @@
-/* All code is Copyright 2013-2023 Bixma */
-/* All code is patent */
-
+/* All code is Copyright 2013-2023 Aaron Scott Dishno Ed.D., HTTP3D Inc. - WalkTheWeb, and the contributors */
+/* "3D Browsing" is a USPTO Patented (Serial # 9,940,404) and Worldwide PCT Patented Technology by Aaron Scott Dishno Ed.D. and HTTP3D Inc. */
+/* Read the included GNU Ver 3.0 license file for details and additional release information. */
 
 /* these functions are used to administer a website in admin mode only */
 
@@ -23,13 +23,13 @@ WTWJS.prototype.openAllUsers = async function(zfilter) {
 				zusersnote = '<b>Local Users</b> provides a list of local users on this server that have been granted one or more security Roles.<br />';
 				break;
 			case 'Global Users':
-				zusersnote = '<b>Global Users</b> provides a list of roomz Global users that have been granted one or more security roles.<br />';
+				zusersnote = '<b>Global Users</b> provides a list of WalkTheWeb Global users that have been granted one or more security roles.<br />';
 				break;
 			case 'Visiting Users':
-				zusersnote = '<b>Visiting Users</b> provides a list of logged in users including those who have visited using a roomz Global Login, that do not have any security roles on this server.<br />';
+				zusersnote = '<b>Visiting Users</b> provides a list of logged in users including those who have visited using a WalkTheWeb Global Login, that do not have any security roles on this server.<br />';
 				break;
 			default:
-				zusersnote = '<b>All Users</b> provides a list of users including those who have visited using a roomz Global Login.<br />';
+				zusersnote = '<b>All Users</b> provides a list of users including those who have visited using a WalkTheWeb Global Login.<br />';
 				break;
 		}
 		dGet('wtw_usersnote').innerHTML = zusersnote;

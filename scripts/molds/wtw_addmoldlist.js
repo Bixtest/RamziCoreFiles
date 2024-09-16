@@ -1,6 +1,6 @@
-/* All code is Copyright 2013-2023 Bixma */
-/* All code is patent */
-
+/* All code is Copyright 2013-2023 Aaron Scott Dishno Ed.D., HTTP3D Inc. - WalkTheWeb, and the contributors */
+/* "3D Browsing" is a USPTO Patented (Serial # 9,940,404) and Worldwide PCT Patented Technology by Aaron Scott Dishno Ed.D. and HTTP3D Inc. */
+/* Read the included GNU Ver 3.0 license file for details and additional release information. */
 
 /* these functions set the types of molds to add and define the default values, form fields, and functions to create the molds */
 
@@ -409,7 +409,7 @@ WTWJS.prototype.completeMold = function(zmold, zmoldname, zparentname, zmolddef,
 			//zmold.isVisible = false;
 			zmold.position = new BABYLON.Vector3(zposx, zposy, zposz);
 			zmold.rotation = new BABYLON.Vector3(WTW.getRadians(zrotx), WTW.getRadians(zroty), WTW.getRadians(zrotz));
-			zmold.isPickable = true;
+			
 			if (zmolddef.sound != undefined) {
 				if (zmolddef.sound.id != '') {
 					WTW.loadSoundToMold(zmold, zmoldname, zmolddef.sound.id, zmolddef.sound.path, zmolddef.sound.loop, zmolddef.sound.attenuation, zmolddef.sound.maxdistance, zmolddef.sound.rollofffactor, zmolddef.sound.refdistance, -1);
@@ -488,15 +488,14 @@ WTWJS.prototype.completeMold = function(zmold, zmoldname, zparentname, zmolddef,
 				/* if mold is set to add reflection, add mold to the reflections array */
 				WTW.addReflectionRefraction(zmold);
 			}
+			if (WTW.adminView == 1 || zmolddef.ispickable == '1') {
+				zmold.isPickable = true;
+			}
 			if (zcheckcollisions == '1' && zcoveringname != 'none') {
 				zmold.checkCollisions = true; 
 			} else {
 				zmolddef.checkcollisions = '0';
 				zmold.checkCollisions = false;
-			}
-			if (WTW.adminView == 1 || zmolddef.ispickable == '1') {
-				/* mouse over covers hovers in the 3D Scene - for admin mode */
-				WTW.registerMouseOver(zmold);
 			}
 			/* work in progress - currently disabled, freeze world matrix can speed up the scene with less calculations */
 			if (WTW.AdminView == 0 && zparentname.indexOf('actionzone') == -1 && zparentname != '') {
@@ -504,7 +503,7 @@ WTWJS.prototype.completeMold = function(zmold, zmoldname, zparentname, zmolddef,
 			} else {
 				zmold.unfreezeWorldMatrix();
 			}
-			
+			zmold.renderingGroupId = 1;
 			/*
 			 * Possible values : 
 			 * - BABYLON.AbstractMesh.CULLINGSTRATEGY_STANDARD  

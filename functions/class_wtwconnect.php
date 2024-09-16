@@ -149,6 +149,12 @@ class wtwconnect {
 			if (defined('wtw_adminname') == false) {
 				define("wtw_adminname", '');
 			}
+			if (defined('wtw_babylonversion') == false) {
+				define("wtw_babylonversion", 'v5.x.x');
+			}
+			if (defined('wtw_physicsengine') == false) {
+				define("wtw_physicsengine", '');
+			}
 			if (defined('wtw_ftpuser') == false) {
 				define("wtw_ftpuser", '');
 			}
@@ -196,6 +202,11 @@ class wtwconnect {
 		return $wtwdb->keyExists($ztablename, $zfieldid, $zkeyid);
 	}
 	
+	public function verifyFolderExists($zfolder) {
+		global $wtwdb;
+		return $wtwdb->verifyFolderExists($zfolder);
+	}
+	
 	public function getNewKey($ztablename, $zfieldid, $zdefaultkeyid) {
 		global $wtwdb;
 		return $wtwdb->getNewKey($ztablename, $zfieldid, $zdefaultkeyid);
@@ -217,13 +228,13 @@ class wtwconnect {
 	}
 	
 	public function getFilefromURL($zfromurl, $zfilepath, $zfilename) {
-		/* save file using any available method fopen, curl, or ftp (added soon) */
+		/* save file using any available method fopen or curl */
 		global $wtwdb;
 		return $wtwdb->getFilefromURL($zfromurl, $zfilepath, $zfilename);
 	}
 
 	public function openFilefromURL($zfromurl, $zuseincludepath=false, $zcontext=null) {
-		/* open file using any available method fopen, curl, or ftp (added soon) */
+		/* open file using any available method fopen or curl */
 		global $wtwdb;
 		return $wtwdb->openFilefromURL($zfromurl, $zuseincludepath, $zcontext);
 	}
@@ -357,6 +368,16 @@ class wtwconnect {
 		return $wtwdb->checkNumber($zval, $zdefaultval);
 	}
 
+	public function getMaximumFileUploadSize() {  
+		global $wtwdb;
+		return $wtwdb->getMaximumFileUploadSize();
+	}  
+
+	public function convertPHPSizeToBytes($zsize) {
+		global $wtwdb;
+		return $wtwdb->convertPHPSizeToBytes($zsize);
+	}
+	
 	public function checkAlphaNumeric($zid) {
 		global $wtwdb;
 		return $wtwdb->checkAlphaNumeric($zid);
@@ -457,8 +478,8 @@ class wtwconnect {
 		$zheader = "";
 		try {
 			if ($this->hasValue($_SERVER['HTTP_REFERER'])) {
-				if (substr($_SERVER['HTTP_REFERER'], 0, 29) === 'https://bixmaab.com/') {
-					$zavailabledomains = 'bixmaab.com';
+				if (substr($_SERVER['HTTP_REFERER'], 0, 29) === 'https://3dnet.walktheweb.com/') {
+					$zavailabledomains = '3dnet.walktheweb.com';
 				}
 			}
 			$zheader .= header('Access-Control-Allow-Origin: '.$zavailabledomains);
